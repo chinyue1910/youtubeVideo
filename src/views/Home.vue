@@ -82,7 +82,7 @@ export default {
             part: 'snippet,contentDetails',
             chart: 'mostPopular',
             maxResults: 50,
-            key: 'AIzaSyBItLWYm7nMpPEY0DGGm8g9b_7E29Hr0ok',
+            key: process.env.VUE_APP_KEY,
             regionCode: 'tw',
             videoCategoryId: 10,
             pageToken: token === undefined ? '' : token
@@ -114,7 +114,7 @@ export default {
         params: {
           part: 'snippet',
           maxResults: 4,
-          key: 'AIzaSyBItLWYm7nMpPEY0DGGm8g9b_7E29Hr0ok',
+          key: process.env.VUE_APP_KEY,
           regionCode: 'tw',
           videoCategoryId: 10,
           type: 'video',
