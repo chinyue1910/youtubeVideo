@@ -1,7 +1,7 @@
 <template lang="pug">
-#home
+#collect
   .container
-    .row
+    .row(v-if="infos.length !== 0")
       .col(v-for="(info, index) in infos", :key="index" @click="watch(info)")
         .box
           img(:src="info.snippet.thumbnails.standard.url")
@@ -21,7 +21,8 @@
           | {{ info.snippet.title.length > 30 ? info.snippet.title.slice(0, 30) + '...' : info.snippet.title }}
         .text
           | {{ info.snippet.description.length > 50 ? info.snippet.description.slice(0, 50) + '...' : info.snippet.description }}
-    .row
+    router-link.link(to="/" v-else) 目前沒有喜愛的收藏，點擊前往收聽
+    .row(v-if="pagination > 1")
       ul.pagination.modal
         li
           a.prev(@click.prevent="prev") «
@@ -36,7 +37,6 @@ export default {
   data () {
     return {
       currentPage: 1,
-      pagination: '',
       totalResults: '',
       token: ''
     }
@@ -75,38 +75,6 @@ export default {
         })
       }
     },
-    getdata (token) {
-      this.axios
-        .get('https://www.googleapis.com/youtube/v3/videos', {
-          params: {
-            part: 'snippet,contentDetails',
-            chart: 'mostPopular',
-            maxResults: 50,
-            key: 'AIzaSyBItLWYm7nMpPEY0DGGm8g9b_7E29Hr0ok',
-            regionCode: 'tw',
-            videoCategoryId: 10,
-            pageToken: token === undefined ? '' : token
-          }
-        })
-        .then((result) => {
-          for (const i of result.data.items) {
-            const duration =
-              i.contentDetails.duration.match(/(\d+)(?=[MHS])/gi) || []
-            i.contentDetails.duration = duration
-              .map((item) => {
-                return item.length < 2 ? '0' + item : item
-              })
-              .join(':')
-          }
-          this.totalResults = result.data.pageInfo.totalResults
-          this.pagination = Math.ceil(this.totalResults / 12)
-          this.token = result.data.nextPageToken
-          this.$store.commit('addAllData', result.data.items)
-          if (this.allvideoData.length < this.totalResults) {
-            this.getdata(this.token)
-          }
-        })
-    },
     watch (info) {
       this.$router.push({ name: 'Player', params: { id: info.id } })
       this.$store.commit('activeVideo', info)
@@ -129,19 +97,14 @@ export default {
     collections () {
       return this.$store.getters.collections
     },
-    allvideoData () {
-      return this.$store.getters.allvideoData
-    },
     infos () {
-      return this.allvideoData.slice((this.currentPage - 1) * 12, this.currentPage * 12)
+      return this.collections.slice((this.currentPage - 1) * 12, this.currentPage * 12)
+    },
+    pagination () {
+      return Math.ceil(this.collections.length / 12)
     }
   },
   mounted () {
-    if (this.allvideoData.length === 0) {
-      this.getdata(this.token)
-    } else {
-      this.pagination = Math.ceil(this.allvideoData.length / 12)
-    }
     this.currentPage = parseInt(this.$route.query.page) || 1
   }
 }
@@ -164,7 +127,7 @@ export default {
   }
 }
 
-#home {
+#collect {
   background-color: black;
   color: white;
 }
@@ -286,5 +249,14 @@ img {
       background-color: #37b247;
     }
   }
+}
+
+.link{
+  display: flex;
+  justify-content: center;
+  padding: 2rem 0 0 0;
+  text-decoration: none;
+  color: gold;
+  text-decoration: underline;
 }
 </style>

@@ -1,32 +1,30 @@
-<template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
-  </div>
+<template lang="pug">
+#app
+  .navbar
+    router-link.link(to="/" :class="{active:this.$route.path === '/'}") 回首頁
+    router-link.link(to="/collect" :class="{active:this.$route.path === '/collect'}") 收藏
+  keep-alive
+    router-view(style="min-height:calc(100vh - 74px)")
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+<style lang="scss" scoped>
+.navbar {
+  display: flex;
+  justify-content: center;
+  background-color: black;
+  padding-top: 2rem;
 }
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
+.link {
+  color: white;
+  text-decoration: none;
+  margin: 0 1rem;
+  font-size: 2rem;
+  border-radius: 10rem;
+  border: 1px solid white;
+  padding: 0.5rem 1rem;
+}
+.active{
+  color: black;
+  background-color: white;
 }
 </style>
